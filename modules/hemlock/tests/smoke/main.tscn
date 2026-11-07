@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://mover.hml" id="1"]
+[ext_resource type="Script" path="res://checker.gd" id="2"]
+
+[node name="Main" type="Node"]
+
+[node name="Mover" type="Node2D" parent="."]
+script = ExtResource("1")
+speed = 200.0
+
+[node name="Child" type="Sprite2D" parent="Mover"]
+
+[node name="Checker" type="Node" parent="."]
+script = ExtResource("2")

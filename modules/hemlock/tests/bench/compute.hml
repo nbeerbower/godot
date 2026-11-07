@@ -1,0 +1,9 @@
+const EXTENDS = "Node2D";
+let acc = 0.0;
+fn _process(delta) {
+    let s = 0.0;
+    for (let i = 0; i < 20; i++) {
+        s = s + i * delta;
+    }
+    acc = acc + s;
+}

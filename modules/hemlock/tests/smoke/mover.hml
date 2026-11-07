@@ -1,0 +1,40 @@
+// Moves its Node2D right; GDScript (checker.gd) drives the rest
+const EXTENDS = "Node2D";
+const SIGNALS = ["arrived"];
+
+export let speed: f64 = 100.0;
+export let label = "mover";
+let frames = 0;
+let pinged = 0;
+
+fn _ready() {
+    godot.print("READY ", owner.get("name"), " speed=", speed);
+    let child = owner.get_node("Child");
+    godot.print("CHILD ", child.class_name(), " ", child.is_valid());
+    owner.connect("arrived", owner, "_on_arrived");
+    let t = godot.instantiate("Timer");
+    t.set("name", "MadeByHemlock");
+    owner.call("add_child", t);
+}
+
+fn _process(delta) {
+    frames++;
+    let p = owner.get("position");
+    owner.set("position", godot.vec2(p.x + speed * delta, p.y));
+    if (frames == 3) {
+        owner.emit("arrived", frames);
+    }
+}
+
+fn _on_arrived(n) {
+    godot.print("ARRIVED ", n, " ", typeof(owner.get("position")));
+}
+
+fn ping(x: i32): i32 {
+    pinged = pinged + x;
+    return pinged;
+}
+
+fn explode() {
+    throw "boom from hemlock";
+}
