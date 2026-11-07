@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="HemlockScript" inherits="Script" api_type="core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../doc/class.xsd">
+	<brief_description>
+		A script implemented in the Hemlock programming language.
+	</brief_description>
+	<description>
+		A script written in [url=https://github.com/hemlang/hemlock]Hemlock[/url], saved with the [code].hml[/code] extension and run by Hemlock's embedded interpreter.
+		The whole file is the script. Its top level runs once per instance, when the script is attached to an object, so top-level [code]let[/code] variables hold per-object state and top-level [code]fn[/code] functions are its methods, including the engine callbacks ([code]_ready[/code], [code]_process(delta)[/code], [code]_notification(what)[/code], ...). [code]export let[/code] makes a variable an inspector property. [code]owner[/code] is the object the instance belongs to, and [code]godot[/code] holds the engine helpers.
+		Three optional top-level constants configure the script. They are read without running it, and each must be a literal: [code]const EXTENDS = "Node2D";[/code] names the native class the script attaches to (default [code]Object[/code]), [code]const TOOL = true;[/code] runs it in the editor, and [code]const SIGNALS = ["hit"];[/code] declares signals.
+		[codeblock lang=text]
+		const EXTENDS = "Node2D";
+
+		export let speed: f64 = 120.0;
+
+		fn _process(delta) {
+		    let p = owner.get("position");
+		    owner.set("position", godot.vec2(p.x + speed * delta, p.y));
+		}
+		[/codeblock]
+	</description>
+	<tutorials>
+		<link title="Hemlock embedding API">https://github.com/hemlang/hemlock/blob/main/docs/advanced/embedding.md</link>
+	</tutorials>
+</class>

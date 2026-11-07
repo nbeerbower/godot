@@ -1,0 +1,31 @@
+import { clamp01 } from "./lib/util.hml";
+import { sqrt } from "@stdlib/math";
+const SIGNALS = ["ticked"];
+
+export let count = 0;
+let notes = [];
+
+fn bump(by?: 1) {
+    count = count + by;
+    owner.emit("ticked", count);
+    return count;
+}
+
+fn _notification(what) {
+    if (what == 13) { notes.push("ready-notification"); }
+}
+
+fn notes_seen() { return notes; }
+fn math() { return [clamp01(5), sqrt(81.0)]; }
+
+fn rng_roll() {
+    let rng = godot.instantiate("RandomNumberGenerator");
+    rng.set("seed", 42);
+    let v = rng.call("randi_range", 1, 6);
+    godot.release(rng);
+    let gone = true;
+    try { rng.call("randi"); gone = false; } catch (e) { gone = true; }
+    return [v, gone];
+}
+
+fn bad_set() { owner.set("no_such_prop", 1); }

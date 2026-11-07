@@ -1,0 +1,42 @@
+#!/usr/bin/env python
+from misc.utility.scons_hints import *
+
+import os
+import shlex
+import subprocess
+
+Import("env")
+Import("env_modules")
+
+env_hemlock = env_modules.Clone()
+
+hemlock_dir = os.path.abspath(os.path.expanduser(env.get("hemlock_dir", "") or os.environ.get("HEMLOCK_DIR", "")))
+
+# Build libhemlock_embed.a in the Hemlock checkout (a no-op when it is up to
+# date) and ask its Makefile which system libraries the interpreter needs, so
+# the link line follows how Hemlock was configured (libwebsockets or not, ...).
+make = env.get("MAKE", "make")
+jobs = str(env.GetOption("num_jobs") or 1)
+if subprocess.call([make, "-s", "-C", hemlock_dir, "-j" + jobs, "embed"]) != 0:
+    print(f"hemlock: building libhemlock_embed.a failed (run `make embed` in {hemlock_dir}).")
+    Exit(255)
+ldflags = subprocess.check_output([make, "-s", "-C", hemlock_dir, "embed-ldflags"], text=True).strip()
+
+build_dir = os.path.join(hemlock_dir, "build")
+env_hemlock.Prepend(CPPPATH=[os.path.join(hemlock_dir, "include")])
+env_hemlock.Append(CPPDEFINES=[("HEMLOCK_DEFAULT_STDLIB", '\\"{}\\"'.format(os.path.join(hemlock_dir, "stdlib")))])
+
+# The archive goes on the final link through the main env. Godot links its
+# own (bundled) zlib; the interpreter's -lz resolves to it, which is
+# ABI-compatible.
+env.Append(LIBPATH=[build_dir])
+env.Append(LIBS=["hemlock_embed"])
+for flag in shlex.split(ldflags):
+    if flag.startswith("-l"):
+        env.Append(LIBS=[flag[2:]])
+    elif flag.startswith("-L"):
+        env.Append(LIBPATH=[flag[2:]])
+    else:
+        env.Append(LINKFLAGS=[flag])
+
+env_hemlock.add_source_files(env.modules_sources, "*.cpp")
