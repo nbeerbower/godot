@@ -140,6 +140,10 @@ yet.
 
 ## Tests
 
+`tests/bench/run_bench.sh [godot-binary]` measures `_process` cost per call
+against GDScript for an empty body, a 20-iteration float loop, and a
+position read/write through the engine.
+
 `tests/smoke/run_smoke.sh [godot-binary]` runs a headless project that
 covers lifecycle callbacks, properties, calls in both directions, signals,
 error locations, broken scripts, base-type checks and hot reload.

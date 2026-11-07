@@ -1,0 +1,5 @@
+config_version=5
+
+[application]
+config/name="Hemlock _process benchmark"
+run/main_scene="res://bench.tscn"

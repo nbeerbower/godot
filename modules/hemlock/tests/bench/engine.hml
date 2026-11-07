@@ -1,0 +1,5 @@
+const EXTENDS = "Node2D";
+fn _process(delta) {
+    let p = owner.get("position");
+    owner.set("position", godot.vec2(p.x + 10.0 * delta, p.y));
+}
